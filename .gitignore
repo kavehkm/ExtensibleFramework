@@ -1,2 +1,6 @@
 # php storm configurations
 .idea/
+
+
+# configs file
+configs.json
