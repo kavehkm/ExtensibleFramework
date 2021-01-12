@@ -8,7 +8,7 @@ try {
     include __DIR__ . '/../includes/autoload.php';
 
 
-    $route = $_GET['route'] ?? 'posts/list';
+    $route = $_GET['route'] ?? 'home';
     $routes = new BlogRoutes();
     $method = $_SERVER['REQUEST_METHOD'];
 
