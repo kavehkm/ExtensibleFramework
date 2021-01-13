@@ -20,7 +20,7 @@ class EntryPoint
     {
         if ($this->route != strtolower($this->route)) {
             http_response_code(301);
-            header('location: ' . strtolower($this->route));
+            header('location: /?route=' . strtolower($this->route));
         }
     }
 
@@ -34,19 +34,30 @@ class EntryPoint
 
     public function run()
     {
+        // get routes
         $routes = $this->routes->getRoutes();
-        $controller = $routes[$this->route][$this->method]['controller'];
-        $action = $routes[$this->route][$this->method]['action'];
+        // get authentication
+        $authentication = $this->routes->getAuthentication();
 
-        $page = $controller->$action();
-
-        $title = $page['title'];
-
-        if (isset($page['variables'])) {
-            $output = $this->loadTemplate($page['template'], $page['variables']);
+        // check for authentication
+        if (isset($routes[$this->route]['login']) && !$authentication->isLoggedIn()) {
+            http_response_code(403);
+            header('location: /?route=login/error');
         } else {
-            $output = $this->loadTemplate($page['template']);
+
+            $controller = $routes[$this->route][$this->method]['controller'];
+            $action = $routes[$this->route][$this->method]['action'];
+
+            $page = $controller->$action();
+
+            $title = $page['title'];
+
+            if (isset($page['variables'])) {
+                $output = $this->loadTemplate($page['template'], $page['variables']);
+            } else {
+                $output = $this->loadTemplate($page['template']);
+            }
+            include __DIR__ . '/../../templates/layout.html.php';
         }
-        include __DIR__ . '/../../templates/layout.html.php';
     }
 }
