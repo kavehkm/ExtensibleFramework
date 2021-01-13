@@ -44,6 +44,15 @@ class DatabaseTable
         return $row[0];
     }
 
+    public function find($column, $value)
+    {
+        $sql = 'SELECT * FROM `' . $this->table . '` WHERE `' . $column . '` = :value';
+        $parameters = [
+            'value' => $value
+        ];
+        return $this->query($sql, $parameters)->fetchAll();
+    }
+
     public function findById($id)
     {
         $sql = 'SELECT * FROM `' . $this->table . '` WHERE `'. $this->primaryKey . '` = :id';
